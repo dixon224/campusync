@@ -4,7 +4,11 @@ const schema = new mongoose.Schema(
     name: String,
     email: { type: String, unique: true },
     password: String,
-    role: { type: String, enum: ["student", "admin"], default: "student" },
+    role: {
+      type: String,
+      enum: ["student", "teacher", "admin"],
+      default: "student",
+    },
   },
   { timestamps: true },
 );

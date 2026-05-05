@@ -2,15 +2,17 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import user from "../models/user.js";
-
 const r = Router();
 
 r.post("/register", async (req, res) => {
   const { name, email, password, role } = req.body;
+  const exists = await user.findOne({ email });
+  if (exists) return res.status(400).json({ message: "User already exists" });
   const hash = await bcrypt.hash(password, 10);
   const u = await user.create({ name, email, password: hash, role });
   res.json(u);
 });
+
 r.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const u = await user.findOne({ email });
@@ -22,4 +24,5 @@ r.post("/login", async (req, res) => {
   });
   res.json({ token, user: u });
 });
+
 export default r;
