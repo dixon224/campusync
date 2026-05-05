@@ -1,7 +1,7 @@
 import Header from "../components/Header";
-import { Calendar, Bell, NotebookPen } from "lucide-react";
+import { Calendar, Bell } from "lucide-react";
 import BottomNav from "../components/BottomNav";
-const Dashboard = () => {
+const DashboardTeacher = () => {
   return (
     <>
       <Header title="Dashboard" showTrash={false} showCard={true} />
@@ -35,10 +35,6 @@ const Dashboard = () => {
             </div>
 
             <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
-              <NotebookPen className="text-gray-600" size={22} />
-            </div>
-
-            <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
               <Bell className="text-gray-600 hover:cursor-pointer" size={22} />
             </div>
           </div>
@@ -57,4 +53,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardTeacher;

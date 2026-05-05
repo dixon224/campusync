@@ -1,7 +1,15 @@
 import { useState } from "react";
+import http from "../api/http";
 
 function SignUp() {
   const [isStudent, setIsStudent] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [studentId, setStudentId] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [identification, setIdentification] = useState(null);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   function AddStudent() {
     !isStudent && setIsStudent(true);
   }
@@ -9,18 +17,55 @@ function SignUp() {
   function NotStudent() {
     isStudent && setIsStudent(false);
   }
+  async function handleSignUp(e) {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    const formData = new FormData();
+
+    formData.append("role", isStudent ? "student" : "teacher");
+    formData.append("fullName", fullName);
+    formData.append("email", email);
+    formData.append("password", password);
+
+    if (isStudent) {
+      formData.append("studentId", studentId);
+    }
+    formData.append("identification", identification);
+
+    try {
+      await http.post("/", formData);
+      setSuccess(
+        "You have successfully registered a ",
+        isStudent ? "student" : "teacher",
+      );
+    } catch (err) {
+      setError(err.response?.data?.message || "Login error");
+      setSuccess("");
+    }
+  }
   return (
     <div className="min-h-screen bg-yellow-300 flex items-center justify-center p-4">
       <div className="w-full max-w-sm md:max-w-md bg-white rounded-3xl shadow-lg p-6">
         <h1 className="text-2xl font-bold text-black text-center">
           Create Account
         </h1>
-
         <p className="text-sm text-gray-500 text-center mt-2">
           Join CampusSync and manage your student life.
         </p>
 
-        <form className="mt-6 space-y-4">
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mt-4">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="bg-green-50 border border-green-200 text-white-600 text-sm rounded-xl px-4 py-3 mt-4">
+            {success}
+          </div>
+        )}
+        <form onSubmit={handleSignUp} className="mt-6 space-y-4">
           <div className="flex gap-6 justify-center mt-4">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -48,6 +93,8 @@ function SignUp() {
           <input
             type="text"
             placeholder="Full name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-black placeholder:text-gray-400 outline-none transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-100"
           />
 
@@ -55,6 +102,8 @@ function SignUp() {
             <input
               type="text"
               placeholder="Student ID (NPM)"
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
               className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-black placeholder:text-gray-400 outline-none transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-100"
             />
           )}
@@ -62,22 +111,24 @@ function SignUp() {
           <input
             type="email"
             placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-black placeholder:text-gray-400 outline-none transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-100"
           />
 
           <input
             type="password"
             placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-black placeholder:text-gray-400 outline-none transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-100"
           />
 
-          {isStudent && (
-            <input
-              type="file"
-              placeholder="Student Card"
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-black placeholder:text-gray-400 outline-none transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-100"
-            />
-          )}
+          <input
+            type="file"
+            onChange={(e) => setIdentification(e.target.files[0])}
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-black placeholder:text-gray-400 outline-none transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-100"
+          />
 
           <button
             type="submit"

@@ -1,7 +1,14 @@
 import Header from "../components/Header";
-import { Calendar, Bell, NotebookPen } from "lucide-react";
+import { Calendar, Bell, NotebookPen, UserPlus } from "lucide-react";
 import BottomNav from "../components/BottomNav";
-const Dashboard = () => {
+
+const DashboardAdmin = () => {
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+  });
   return (
     <>
       <Header title="Dashboard" showTrash={false} showCard={true} />
@@ -39,16 +46,50 @@ const Dashboard = () => {
             </div>
 
             <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
+              <UserPlus className="text-gray-600" size={22} />
+            </div>
+
+            <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
               <Bell className="text-gray-600 hover:cursor-pointer" size={22} />
             </div>
           </div>
         </div>
 
         <div className="mt-4 w-full mx-auto max-w-sm md:max-w-md lg:max-w-xl">
-          <div className="flex items-center justify-between rounded-3xl bg-white p-3 shadow-md">
-            <p className="mt-1 text-sm font-medium text-gray-500 text-center max-w-xs mx-auto">
-              You do not have any class scheduled today or tomorrow
-            </p>
+          <div className="rounded-3xl bg-white p-4 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-black">
+                  Campus activity
+                </h2>
+              </div>
+
+              <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-500">
+                {formattedDate}
+              </span>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl bg-yellow-100 p-4">
+                <p className="text-2xl font-bold text-black">120</p>
+                <p className="mt-1 text-xs text-gray-600">Students</p>
+              </div>
+
+              <div className="rounded-2xl bg-sky-100 p-4">
+                <p className="text-2xl font-bold text-black">32</p>
+                <p className="mt-1 text-xs text-gray-600">Classes</p>
+              </div>
+
+              <div className="rounded-2xl bg-purple-100 p-4">
+                <p className="text-2xl font-bold text-black">5</p>
+                <p className="mt-1 text-xs text-gray-600">Notifications</p>
+              </div>
+
+              <div className="rounded-2xl bg-green-100 p-4">
+                <p className="text-2xl font-bold text-black">8</p>
+                <p className="mt-1 text-xs text-gray-600">Free Rooms</p>
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -57,4 +98,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardAdmin;
