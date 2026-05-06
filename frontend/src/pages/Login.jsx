@@ -40,16 +40,16 @@ function Login() {
     };
 
     if (isStudent) {
-      payload.studentId = studentId;
+      payload.npm = studentId;
     } else {
       payload.email = email;
     }
 
     try {
-      const res = await http.post("/", payload);
+      const res = await http.post("/auth/login", payload);
       const user = res.data.user;
       setUser(user);
-      console.log(res);
+      //console.log(res);
       if (user.role === "student") {
         navigate("/dashboard", { replace: true });
       } else if (user.role === "teacher") {
@@ -57,6 +57,10 @@ function Login() {
       } else {
         navigate("/dashboard_admin", { replace: true });
       }
+      setStudentId("");
+      setEmail("");
+      setPassword("");
+      setError("");
     } catch (err) {
       setError(err.response?.data?.message || "Login error");
     }

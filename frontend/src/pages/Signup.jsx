@@ -25,23 +25,30 @@ function SignUp() {
     const formData = new FormData();
 
     formData.append("role", isStudent ? "student" : "teacher");
-    formData.append("fullName", fullName);
+    formData.append("name", fullName);
     formData.append("email", email);
     formData.append("password", password);
 
     if (isStudent) {
-      formData.append("studentId", studentId);
+      formData.append("npm", studentId);
     }
-    formData.append("identification", identification);
+    if (identification) {
+      formData.append("profileImage", identification);
+    }
 
     try {
-      await http.post("/", formData);
+      await http.post("/auth/register", formData);
       setSuccess(
-        "You have successfully registered a ",
-        isStudent ? "student" : "teacher",
+        `You have successfully registered a ${isStudent ? "student" : "teacher"}`,
       );
+      setFullName("");
+      setStudentId("");
+      setEmail("");
+      setPassword("");
+      setIdentification("");
+      setError("");
     } catch (err) {
-      setError(err.response?.data?.message || "Login error");
+      setError(err.response?.data?.message || "Signup error");
       setSuccess("");
     }
   }

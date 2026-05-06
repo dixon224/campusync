@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const http = axios.create({
   baseURL,
@@ -12,14 +12,19 @@ export async function loginUser(data) {
   return res.data;
 }
 
-export async function getMe() {
-  const res = await http.get("/auth/me");
+export async function RegisterUser(data) {
+  const res = await http.post("/auth/register", data);
   return res.data;
 }
 
-export async function logoutUser() {
-  const res = await http.post("/auth/logout");
-  return res.data;
-}
+// export async function getMe() {
+//   const res = await http.get("/api/auth/me");
+//   return res.data;
+// }
+
+// export async function logoutUser() {
+//   const res = await http.post("/auth/logout");
+//   return res.data;
+// }
 
 export default http;

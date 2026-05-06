@@ -1,8 +1,11 @@
 import Header from "../components/Header";
 import { Calendar, Bell, NotebookPen, UserPlus } from "lucide-react";
 import BottomNav from "../components/BottomNav";
+import useAuth from "../context/UseAuth";
+import { Link } from "react-router-dom";
 
 const DashboardAdmin = () => {
+  const { user } = useAuth();
   const today = new Date();
   const formattedDate = today.toLocaleDateString("en-US", {
     weekday: "long",
@@ -11,16 +14,18 @@ const DashboardAdmin = () => {
   });
   return (
     <>
-      <Header title="Dashboard" showTrash={false} showCard={true} />
+      <Header title="Dashboard" showCard={false} />
 
       <main className="min-h-screen bg-yellow-300 pt-24 px-4 ">
         <div className="mx-auto w-full max-w-sm md:max-w-md lg:max-w-xl rounded-3xl bg-white p-5 shadow-md flex items-center justify-between">
           {/* LEFT : Infos */}
           <div className="flex-1 pr-4">
-            <p className="text-lg font-bold text-black">SOUARE Ibrahima Sory</p>
+            <p className="text-lg font-bold text-black">
+              {user ? user.name : "Not Connected"}
+            </p>
 
             <p className="mt-1 text-sm font-medium text-gray-500 max-w-xs">
-              3A Spécialité Systèmes automatisés et Génie Informatique
+              {user ? user.role : "Not Connected"}
             </p>
 
             <p className="mt-2 text-sm text-gray-400">2025/2026</p>
@@ -46,7 +51,10 @@ const DashboardAdmin = () => {
             </div>
 
             <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
-              <UserPlus className="text-gray-600" size={22} />
+              <Link to={"/signup"}>
+                {" "}
+                <UserPlus className="text-gray-600" size={22} />
+              </Link>
             </div>
 
             <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">

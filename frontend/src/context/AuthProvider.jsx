@@ -9,11 +9,10 @@ function AuthProvider({ children }) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const res = await http.get("/api/auth/me");
+        const res = await http.get("auth/me");
         setUser(res.data.user);
-      } catch (err) {
+      } catch {
         setUser(null);
-        console.log(err);
       } finally {
         setLoading(false);
       }

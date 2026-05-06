@@ -1,12 +1,31 @@
-import { IdCard } from "lucide-react";
+import { IdCard, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-const Header = ({ title, showTrash, showCard }) => {
+import useAuth from "../context/UseAuth";
+import http from "../api/http";
+const Header = ({ title, showCard }) => {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
+  async function handleLogout() {
+    try {
+      await http.post("/auth/logout");
+
+      setUser(null);
+
+      navigate("/login");
+    } catch (err) {
+      console.log(err);
+    }
+  }
   return (
     <div className="fixed top-0 left-0 w-full bg-yellow-300 h-13 flex items-center justify-between px-4 border-b-2 border-white focus:outline-none">
       {/* LEFT */}
-      <div className="w-8">
-        {showTrash && <button className="text-black text-xl">←</button>}
+      <div className="w-10 flex justify-start">
+        <button
+          onClick={handleLogout}
+          className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm cursor-pointer active:scale-95 transition"
+        >
+          <LogOut size={18} className="text-red-400" />
+        </button>
       </div>
 
       {/* CENTER (contenu centré mobile) */}

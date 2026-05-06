@@ -8,10 +8,16 @@ import { Routes, Route } from "react-router-dom";
 import Notifications from "./pages/Notifications";
 import DashboardAdmin from "./pages/DashboardAdmin";
 import DashboardTeacher from "./pages/DashboardTeacher";
+import useAuth from "./context/UseAuth";
 function App() {
+  const { user } = useAuth();
   return (
     <Routes>
-      <Route path="/signup" element={<SignUp />} />
+      <Route path="/" element={<Login />} />
+      <Route
+        path="/signup"
+        element={user && user.role === "admin" && <SignUp />}
+      />
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/dashboard_admin" element={<DashboardAdmin />} />
