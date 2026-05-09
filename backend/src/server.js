@@ -6,6 +6,7 @@ import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import scheduleRoutes from "./routes/scheduleRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import classRoutes from "./routes/classRoutes.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -28,5 +29,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/schedules", scheduleRoutes);
 
 app.use("/api/messages", messageRoutes);
+
+app.use("/api/classes", classRoutes);
+//console.log("Mongo URI exists:", !!process.env.MONGO_URI);
 
 connectDB().then(() => app.listen(process.env.PORT || 5000));

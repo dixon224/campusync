@@ -5,6 +5,8 @@ import user from "../models/user.js";
 import upload from "../middleware/upload.js";
 import cloudinary from "../config/cloudinary.js";
 import streamifier from "streamifier";
+import _class from "../models/class.js";
+import schedule from "../models/schedule.js";
 const r = Router();
 
 const cookieOptions = {
@@ -56,7 +58,7 @@ r.post("/register", upload.single("profileImage"), async (req, res) => {
     profileImage,
   });
 
-  res.json("User Successfully added");
+  return res.json("User Successfully added");
 });
 
 r.post("/login", async (req, res) => {
@@ -73,7 +75,7 @@ r.post("/login", async (req, res) => {
     ...cookieOptions,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-  res.json({ user: toAuthUser(u) });
+  return res.json({ user: toAuthUser(u) });
 });
 
 r.get("/me", async (req, res) => {
@@ -91,15 +93,129 @@ r.get("/me", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ user: u });
+    return res.json({ user: u });
   } catch {
     res.status(401).json({ message: "Invalid or expired token" });
   }
 });
 
+r.get("/teachers", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const currentUser = await user.findById(decoded.id).select("-password");
+
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (currentUser.role === "student" || currentUser.role === "teacher") {
+      return res
+        .status(403)
+        .json({ message: "Only an admin can retreive all teachers" });
+    }
+
+    const teachers = await user.find({ role: "teacher" }).select("-password");
+
+    if (teachers.length === 0) {
+      return res.status(404).json({ message: "No teachers found" });
+    }
+    return res.json({ teachers });
+  } catch {
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+});
+
+r.get("/students", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const currentUser = await user.findById(decoded.id).select("-password");
+
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (currentUser.role === "student") {
+      return res
+        .status(403)
+        .json({ message: "Only an admin can retreive all students" });
+    }
+
+    const students = await user.find({ role: "student" }).select("-password");
+
+    if (students.length === 0) {
+      return res.status(404).json({ message: "No students found" });
+    }
+    return res.json({ students });
+  } catch {
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+});
+
+r.get("/my_schedules", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const currentUser = await user.findById(decoded.id).select("-password");
+
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userId = currentUser.id;
+
+    const classes = await _class
+      .find({
+        students: userId,
+      })
+      .select("_id name");
+
+    const classIds = classes.map((c) => c._id);
+
+    const schedules = await schedule
+      .find({
+        class: { $in: classIds },
+      })
+      .populate("class", "name")
+      .populate("teacher", "name")
+      .sort({ startTime: 1 });
+
+    res.status(200).json({
+      success: true,
+      schedules,
+    });
+  } catch (error) {
+    console.error("Get student schedules error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error or Invalid or expired token",
+    });
+  }
+});
+
 r.post("/logout", (req, res) => {
   res.clearCookie("token", cookieOptions);
-  res.json({ message: "Logged out" });
+  return res.json({ message: "Logged out" });
 });
 
 export default r;

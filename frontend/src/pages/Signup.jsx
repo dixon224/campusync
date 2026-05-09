@@ -45,7 +45,7 @@ function SignUp() {
       setStudentId("");
       setEmail("");
       setPassword("");
-      setIdentification("");
+      setIdentification(null);
       setError("");
     } catch (err) {
       setError(err.response?.data?.message || "Signup error");

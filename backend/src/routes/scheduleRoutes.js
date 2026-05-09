@@ -1,5 +1,5 @@
 import { Router } from "express";
-import schedule from "../models/schedule.js";
+import Schedule from "../models/schedule.js";
 import _class from "../models/class.js";
 import { auth, teacherOrAdmin } from "../routes/auth.js";
 const r = Router();
@@ -11,38 +11,53 @@ r.get("/", auth, async (req, res) => {
 
 r.post("/", auth, teacherOrAdmin, async (req, res) => {
   try {
-    const { title, startTime, endTime, classId } = req.body;
+    const { classId, teacherId, description, classroom, startTime, endTime } =
+      req.body;
 
     // 🔹 Validate required fields
-    if (!title || !startTime || !endTime || !classId) {
+    if (
+      !classId ||
+      !teacherId ||
+      !description ||
+      !classroom ||
+      !startTime ||
+      !endTime
+    ) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // 🔹 Validate ObjectId format BEFORE querying
-    if (!classId.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({ message: "Invalid classId format" });
-    }
+    // // 🔹 Validate ObjectId format BEFORE querying
+    // if (!classId.match(/^[0-9a-fA-F]{24}$/)) {
+    //   return res.status(400).json({ message: "Invalid classId format" });
+    // }
 
-    const cls = await Class.findById(classId);
-    if (!cls) {
-      return res.status(404).json({ message: "Class not found" });
-    }
+    // const cls = await Class.findById(classId);
+    // if (!cls) {
+    //   return res.status(404).json({ message: "Class not found" });
+    // }
 
     // 🔹 Prevent duplicate schedule
-    const exists = await Schedule.findOne({ title, startTime, class: classId });
+    const exists = await Schedule.findOne({
+      classroom,
+      startTime,
+      class: classId,
+      teacher: teacherId,
+    });
     if (exists) {
       return res.status(400).json({ message: "Schedule already exists" });
     }
 
     const schedule = await Schedule.create({
-      title,
+      class: classId,
+      teacher: teacherId,
+      description,
+      classroom,
       startTime,
       endTime,
-      class: classId,
       createdBy: req.user.id,
     });
 
-    res.json(schedule);
+    return res.json({ message: "A class was successfully scheduled" });
   } catch (err) {
     console.error("SCHEDULE ERROR:", err);
     res.status(500).json({ message: err.message });

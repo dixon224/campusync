@@ -42,12 +42,16 @@ const DashboardAdmin = () => {
         </div>
         <div className="mt-4 w-full mx-auto max-w-sm md:max-w-md lg:max-w-xl">
           <div className="flex items-center justify-between rounded-3xl bg-white p-3 shadow-md">
-            <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
-              <Calendar className="text-gray-600" size={22} />
-            </div>
+            <Link to={"/add_schedule"}>
+              <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
+                <Calendar className="text-gray-600" size={22} />
+              </div>
+            </Link>
 
             <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
-              <NotebookPen className="text-gray-600" size={22} />
+              <Link to={"/class"}>
+                <NotebookPen className="text-gray-600" size={22} />
+              </Link>
             </div>
 
             <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
