@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-import { Calendar, Bell } from "lucide-react";
+import { Calendar, Bell, Mail } from "lucide-react";
 import BottomNav from "../components/BottomNav";
 import useAuth from "../context/UseAuth";
 import { Link } from "react-router-dom";
@@ -41,9 +41,23 @@ const DashboardTeacher = () => {
               </div>
             </Link>
 
-            <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
-              <Bell className="text-gray-600 hover:cursor-pointer" size={22} />
-            </div>
+            <Link to={"/send_message"}>
+              <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
+                <Bell
+                  className="text-gray-600 hover:cursor-pointer"
+                  size={22}
+                />
+              </div>
+            </Link>
+
+            <Link to={"/message"}>
+              <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
+                <Mail
+                  className="text-gray-600 hover:cursor-pointer"
+                  size={22}
+                />
+              </div>
+            </Link>
           </div>
         </div>
 

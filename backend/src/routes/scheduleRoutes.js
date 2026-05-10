@@ -5,8 +5,14 @@ import { auth, teacherOrAdmin } from "../routes/auth.js";
 const r = Router();
 
 r.get("/", auth, async (req, res) => {
-  const schedules = await schedule.find().populate("class");
-  res.json(schedules);
+  const schedules = await Schedule.find()
+    .populate("class", "name")
+    .populate("teacher", "name email")
+    .sort({ startTime: 1 });
+  res.status(200).json({
+    success: true,
+    schedules,
+  });
 });
 
 r.post("/", auth, teacherOrAdmin, async (req, res) => {
@@ -57,7 +63,9 @@ r.post("/", auth, teacherOrAdmin, async (req, res) => {
       createdBy: req.user.id,
     });
 
-    return res.json({ message: "A class was successfully scheduled" });
+    return res.json({
+      message: "A class was successfully scheduled",
+    });
   } catch (err) {
     console.error("SCHEDULE ERROR:", err);
     res.status(500).json({ message: err.message });
@@ -65,18 +73,61 @@ r.post("/", auth, teacherOrAdmin, async (req, res) => {
 });
 
 r.put("/:id", auth, teacherOrAdmin, async (req, res) => {
-  const sched = await schedule.findById(req.params.id);
-  if (!sched) return res.status(404).json({ message: "Schedule not found" });
-  Object.assign(sched, req.body);
-  await sched.save();
-  res.json(sched);
+  try {
+    const sched = await Schedule.findById(req.params.id);
+
+    if (!sched) {
+      return res.status(404).json({ message: "Schedule not found" });
+    }
+
+    const {
+      class: classId,
+      teacher: teacherId,
+      description,
+      classroom,
+      startTime,
+      endTime,
+    } = req.body;
+
+    if (startTime && endTime && new Date(startTime) >= new Date(endTime)) {
+      return res.status(400).json({
+        message: "Start time must be before end time",
+      });
+    }
+
+    if (classId !== undefined) sched.class = classId;
+    if (teacherId !== undefined) sched.teacher = teacherId;
+    if (description !== undefined) sched.description = description;
+    if (classroom !== undefined) sched.classroom = classroom;
+    if (startTime !== undefined) sched.startTime = startTime;
+    if (endTime !== undefined) sched.endTime = endTime;
+
+    const updatedSchedule = await sched.save();
+
+    const populatedSchedule = await updatedSchedule.populate([
+      { path: "class", select: "name" },
+      { path: "teacher", select: "name" },
+      { path: "createdBy", select: "name" },
+    ]);
+
+    res.status(200).json({
+      message: "Schedule updated successfully",
+      schedule: populatedSchedule,
+    });
+  } catch (err) {
+    console.error("Update schedule error:", err);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
 });
 
-r.delete("/:id", auth, teacherOrAdmin, async (req, res) => {
-  const sched = await schedule.findById(req.params.id);
-  if (!sched) return res.status(404).json({ message: "Schedule not found" });
-  await sched.deleteOne();
-  res.json({ message: "Deleted" });
-});
+// r.delete("/:id", auth, teacherOrAdmin, async (req, res) => {
+//   const sched = await schedule.findById(req.params.id);
+//   if (!sched) return res.status(404).json({ message: "Schedule not found" });
+//   await sched.deleteOne();
+//   res.json({ message: "Deleted" });
+// });
 
 export default r;

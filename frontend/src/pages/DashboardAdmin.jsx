@@ -61,9 +61,14 @@ const DashboardAdmin = () => {
               </Link>
             </div>
 
-            <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
-              <Bell className="text-gray-600 hover:cursor-pointer" size={22} />
-            </div>
+            <Link to={"/send_message"}>
+              <div className="flex-1 flex justify-center cursor-pointer hover:bg-gray-100 active:scale-95 transition rounded-xl p-2">
+                <Bell
+                  className="text-gray-600 hover:cursor-pointer"
+                  size={22}
+                />
+              </div>
+            </Link>
           </div>
         </div>
 
@@ -105,7 +110,7 @@ const DashboardAdmin = () => {
           </div>
         </div>
       </main>
-      <BottomNav Dashboard={true} />
+      <BottomNav Dashboard={true} Sent={true} />
     </>
   );
 };

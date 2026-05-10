@@ -12,6 +12,10 @@ import useAuth from "./context/UseAuth";
 import AddClass from "./pages/Class";
 import JoinClass from "./pages/JoinClass";
 import AddSchedule from "./pages/AddSchedule";
+import SendMessage from "./pages/SendMessage";
+import Messages from "./pages/Messages";
+import MessagesSent from "./pages/MessagesSent";
+import Menu from "./pages/Menu";
 function App() {
   const { user } = useAuth();
   return (
@@ -44,6 +48,10 @@ function App() {
       <Route path="/class" element={<AddClass />} />
       <Route path="/join_class" element={<JoinClass />} />
       <Route path="/add_schedule" element={<AddSchedule />} />
+      <Route path="/send_message" element={<SendMessage />} />
+      <Route path="/message" element={<Messages />} />
+      <Route path="/message_sent" element={<MessagesSent />} />
+      <Route path="/menu" element={<Menu />} />
     </Routes>
   );
 }
