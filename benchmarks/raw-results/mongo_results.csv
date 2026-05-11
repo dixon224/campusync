@@ -1,0 +1,5 @@
+test,time_ms,documents_returned,date
+Find all users,75.78,5,2026-05-11T00:57:10.027Z
+Find all messages,22.18,2,2026-05-11T00:57:10.050Z
+Find all classes,21.08,2,2026-05-11T00:57:10.072Z
+Find all schedules,22.99,6,2026-05-11T00:57:10.095Z

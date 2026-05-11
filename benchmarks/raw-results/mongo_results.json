@@ -1,0 +1,26 @@
+[
+  {
+    "test": "Find all users",
+    "time_ms": 75.78,
+    "documents_returned": 5,
+    "date": "2026-05-11T00:57:10.027Z"
+  },
+  {
+    "test": "Find all messages",
+    "time_ms": 22.18,
+    "documents_returned": 2,
+    "date": "2026-05-11T00:57:10.050Z"
+  },
+  {
+    "test": "Find all classes",
+    "time_ms": 21.08,
+    "documents_returned": 2,
+    "date": "2026-05-11T00:57:10.072Z"
+  },
+  {
+    "test": "Find all schedules",
+    "time_ms": 22.99,
+    "documents_returned": 6,
+    "date": "2026-05-11T00:57:10.095Z"
+  }
+]
