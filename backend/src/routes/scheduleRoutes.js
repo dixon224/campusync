@@ -1,3 +1,4 @@
+import { redisClient } from "../server.js";
 import { Router } from "express";
 import Schedule from "../models/schedule.js";
 import _class from "../models/class.js";
@@ -5,14 +6,32 @@ import { auth, teacherOrAdmin } from "../routes/auth.js";
 const r = Router();
 
 r.get("/", auth, async (req, res) => {
-  const schedules = await Schedule.find()
-    .populate("class", "name")
-    .populate("teacher", "name email")
-    .sort({ startTime: 1 });
-  res.status(200).json({
-    success: true,
-    schedules,
-  });
+  const cacheKey = "all_schedules";
+  try {
+    const cachedSchedules = await redisClient.get(cacheKey);
+    if (cachedSchedules) {
+      console.log("Congratulations! Data retrieved from Redis cache!");
+      return res.status(200).json({
+        success: true,
+        source: "Redis Cache",
+        schedules: JSON.parse(cachedSchedules),
+      });
+    }
+    const schedules = await Schedule.find()
+      .populate("class", "name")
+      .populate("teacher", "name email")
+      .sort({ startTime: 1 });
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(schedules));
+    console.log("Success! Data retrieved from MongoDB and saved to Redis!");
+    res.status(200).json({
+      success: true,
+      source: "MongoDB Database",
+      schedules,
+    });
+  } catch (err) {
+    console.error("REDIS ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 r.post("/", auth, teacherOrAdmin, async (req, res) => {
@@ -62,7 +81,8 @@ r.post("/", auth, teacherOrAdmin, async (req, res) => {
       endTime,
       createdBy: req.user.id,
     });
-
+    await redisClient.del("all_schedules");
+    console.log("Cache cleared! New schedule added.");
     return res.json({
       message: "A class was successfully scheduled",
     });

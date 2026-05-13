@@ -9,6 +9,19 @@ import messageRoutes from "./routes/messageRoutes.js";
 import classRoutes from "./routes/classRoutes.js";
 import cookieParser from "cookie-parser";
 
+import { createClient } from 'redis';
+export const redisClient = createClient();
+redisClient.on('error', (err) => console.log('Redis Error:', err));
+const connectRedis = async () => {
+    try {
+        await redisClient.connect();
+        console.log('Congratulations! You have successfully connected to Redis!');
+    } catch (err) {
+        console.error('Could not connect to Redis:', err);
+    }
+};
+connectRedis();
+
 const app = express();
 app.use(cookieParser());
 

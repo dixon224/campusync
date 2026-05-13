@@ -1,3 +1,4 @@
+import { redisClient } from "../server.js";
 import { Router } from "express";
 import message from "../models/message.js";
 import user from "../models/user.js";
@@ -123,7 +124,11 @@ r.post("/", auth, teacherOrAdmin, async (req, res) => {
       { path: "sender", select: "name email role" },
       { path: "recipients", select: "name email role" },
     ]);
-
+    await redisClient.publish("private_messages", JSON.stringify({
+      message: "New private message sent!",
+      recipientCount: recipients.length
+    }));
+    console.log("Congratulations! Private message alert sent via Redis!");
     res.status(201).json({
       message: "Message sent successfully",
       data: populatedMessage,
@@ -137,12 +142,25 @@ r.post("/", auth, teacherOrAdmin, async (req, res) => {
   }
 });
 r.post("/notify", auth, teacherOrAdmin, async (req, res) => {
-  res.json(
-    await message.create({
+  try {
+    const newNotification = await message.create({
       sender: req.user.id,
       content: req.body.content,
       type: "notification",
-    }),
-  );
+    });
+    const payload = {
+      event: "NEW_NOTIFICATION",
+      content: req.body.content,
+      sentBy: req.user.id,
+      at: new Date()
+    };
+    
+    await redisClient.publish("campus_notifications", JSON.stringify(payload));
+    console.log("Congratulations! Real-time notification was published via Redis!");
+
+    res.json(newNotification);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 export default r;
