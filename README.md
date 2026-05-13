@@ -6,6 +6,7 @@ CampusSync is a Progressive Web App for students, allowing them to access schedu
 
 - Member 1: SOUARE Ibrahima Sory
 - Member 2: ANDIKA Mangaraja Nainggolan
+- Member 3: ABBAS Aykhan 
 
 ## Project Architecture
 
