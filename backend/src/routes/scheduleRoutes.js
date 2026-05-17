@@ -130,6 +130,9 @@ r.put("/:id", auth, teacherOrAdmin, async (req, res) => {
       { path: "createdBy", select: "name" },
     ]);
 
+    await redisClient.del("all_schedules");
+    console.log("Cache cleared! Schedule updated.");
+
     res.status(200).json({
       message: "Schedule updated successfully",
       schedule: populatedSchedule,

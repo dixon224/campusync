@@ -39,7 +39,7 @@ Main models:
 
 Redis was selected to improve performance and support real-time behavior.
 
-In CampusSync, Redis can be used for:
+In CampusSync, we use Redis for:
 
 - caching frequently requested data
 - real-time notifications
